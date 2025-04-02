@@ -1,22 +1,23 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import '../styles/global.css';
+---
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Lab Services</title>
+
+    <!-- 🌍 Weglot integration -->
+    <script>
+      const WeglotOptions = {
+        api_key: "wg_e6bed89b31fd7263bf9c70449ec9d42d7"
+      };
+    </script>
+    <script src="https://cdn.weglot.com/weglot.min.js"></script>
+  </head>
+
+  <body class="font-sans text-gray-900 bg-white">
+    <slot />
+  </body>
+</html>
