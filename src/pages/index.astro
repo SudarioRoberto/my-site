@@ -10,6 +10,7 @@ import Insights from '../components/Insights.astro'
 import ClientLogos from '../components/ClientLogos.astro';
 import MicrobiomeIntro from '../components/MicrobiomeIntro.astro';
 import Team from '../components/Team.astro';
+import Layout from '../layouts/Layout.astro';
 ---
 
 <html lang="en">
@@ -31,7 +32,8 @@ import Team from '../components/Team.astro';
 </video>
     <Navbar />
     <main class="space-y-20 relative z-10">
-      <Hero />
+		<Layout>
+		<Hero />
 	  <MicrobiomeIntro />
       <Services />
       <About />
