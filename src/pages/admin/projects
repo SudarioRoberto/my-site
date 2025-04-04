@@ -1,6 +1,6 @@
 ---
 // src/pages/admin/projects.astro
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
 
 const { data: projects, error: projectsError } = await supabase

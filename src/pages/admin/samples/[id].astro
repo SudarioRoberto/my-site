@@ -1,0 +1,47 @@
+---
+
+export const prerender = false;
+
+import Layout from '../../../layouts/LayoutAdmin.astro';
+import { supabase } from '../../../lib/supabase.js';
+
+const { params } = Astro;
+const id = params.id;
+
+const { data: project, error } = await supabase
+  .from('projects')
+  .select('name, samples(id, sample_id, status)')
+  .eq('id', id)
+  .single();
+
+if (error) {
+  console.error(error);
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-28">
+    <div class="max-w-3xl mx-auto space-y-8">
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Amostras do Projeto: {project?.name}</h1>
+
+      {project?.samples.length > 0 ? (
+        <div class="grid gap-4">
+          {project.samples.map(sample => (
+            <div class="bg-gray-100 p-4 rounded shadow flex items-center justify-between">
+              <div>
+                <p class="font-semibold">{sample.sample_id}</p>
+                <p class="text-sm text-gray-600">Status: {sample.status}</p>
+              </div>
+              <form method="POST" action={`/api/delete-sample`}>
+                <input type="hidden" name="id" value={sample.id} />
+                <button class="text-red-600 hover:underline">Excluir</button>
+              </form>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-gray-500">Nenhuma amostra cadastrada.</p>
+      )}
+    </div>
+  </section>
+</Layout>

@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       sameSite: 'strict',
       maxAge: 60 * 60 * 2, // 2 horas
     });
-    return redirect('/admin/projects');
+    return redirect('/admin');
   }
 
   return new Response('Credenciais inválidas', {

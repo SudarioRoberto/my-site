@@ -1,15 +1,7 @@
 ---
 // src/pages/admin/projects.astro
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
-
-export const prerender = false;
-
-const { cookies, redirect } = Astro;
-const isAuthenticated = cookies.get('admin_auth')?.value === 'true';
-if (!isAuthenticated) {
-  throw redirect('/admin/login');
-}
 
 const { data: projects, error: projectsError } = await supabase
   .from('projects')
@@ -34,12 +26,7 @@ if (projects) {
 <Layout>
   <section class="min-h-screen bg-white text-black px-6 py-12">
     <div class="max-w-5xl mx-auto space-y-8">
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-blue-900">Projetos Cadastrados</h1>
-        <form method="POST" action="/api/admin-logout">
-          <button class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Sair</button>
-        </form>
-      </div>
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Projetos Cadastrados</h1>
 
       {projects?.length > 0 ? (
         projects.map(project => (
