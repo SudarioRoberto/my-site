@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
 import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel'; // ✅ current import
 
 export default defineConfig({
-  output: 'server', // Required for SSR
+  output: 'server',
   adapter: vercel(),
-  integrations: [tailwind()]
+  integrations: [tailwind()],
 });
