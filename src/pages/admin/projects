@@ -1,0 +1,53 @@
+---
+// src/pages/admin/projects.astro
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase.js';
+
+const { data: projects, error: projectsError } = await supabase
+  .from('projects')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+let projectSamples = {};
+
+if (projects) {
+  for (const project of projects) {
+    const { data: samples, error: sampleError } = await supabase
+      .from('samples')
+      .select('*')
+      .eq('project_id', project.id)
+      .order('sample_id');
+
+    projectSamples[project.id] = samples || [];
+  }
+}
+---
+
+<Layout>
+  <section class="min-h-screen bg-white text-black px-6 py-12">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <h1 class="text-3xl font-bold text-blue-900 text-center">Projetos Cadastrados</h1>
+
+      {projects?.length > 0 ? (
+        projects.map(project => (
+          <div key={project.id} class="border rounded p-6 shadow-md bg-gray-50">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-2">{project.name}</h2>
+            <p class="text-sm text-gray-500 mb-4">Criado em {new Date(project.created_at).toLocaleString()}</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {projectSamples[project.id]?.map(sample => (
+                <div key={sample.id} class="border p-3 rounded bg-white text-center shadow-sm">
+                  <p class="font-semibold text-blue-700">{sample.sample_id}</p>
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${sample.sample_id}&size=100x100`} alt={`QR ${sample.sample_id}`} class="mx-auto mt-2" />
+                  <p class="text-xs text-gray-500 mt-1">{sample.status}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      ) : (
+        <p class="text-center text-gray-500">Nenhum projeto encontrado.</p>
+      )}
+    </div>
+  </section>
+</Layout>
