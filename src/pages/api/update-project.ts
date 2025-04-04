@@ -23,5 +23,5 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Erro ao atualizar projeto', { status: 500 });
   }
 
-  return Response.redirect('/admin', 303);
+  return Response.redirect(new URL('/admin', request.url), 303);
 };

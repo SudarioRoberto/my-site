@@ -4,7 +4,7 @@ import Layout from '../../layouts/LayoutAdmin.astro';
 import { supabase } from '../../lib/supabase.js';
 
 const { data: projects, error: projectsError } = await supabase
-  .from('projects')
+  .from('projects.astro')
   .select('*')
   .order('created_at', { ascending: false });
 
@@ -12,7 +12,7 @@ let projectSamples = {};
 
 if (projects) {
   for (const project of projects) {
-    const { data: samples } = await supabase
+    const { data: samples, error: sampleError } = await supabase
       .from('samples')
       .select('*')
       .eq('project_id', project.id)
@@ -38,11 +38,7 @@ if (projects) {
               {projectSamples[project.id]?.map(sample => (
                 <div key={sample.id} class="border p-3 rounded bg-white text-center shadow-sm">
                   <p class="font-semibold text-blue-700">{sample.sample_id}</p>
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${sample.sample_id}&size=100x100`}
-                    alt={`QR ${sample.sample_id}`}
-                    class="mx-auto mt-2"
-                  />
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${sample.sample_id}&size=100x100`} alt={`QR ${sample.sample_id}`} class="mx-auto mt-2" />
                   <p class="text-xs text-gray-500 mt-1">{sample.status}</p>
                 </div>
               ))}
