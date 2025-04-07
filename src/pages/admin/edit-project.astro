@@ -81,7 +81,22 @@ if (error || !project) {
             class="w-full border p-3 rounded"
           >{project.description ?? ''}</textarea>
         </div>
-
+        <div>
+            <label class="block text-sm font-medium mb-1">Status do Projeto</label>
+            <select name="status" class="w-full border p-3 rounded">
+              <option selected={project.status === 'Projeto gerado'}>Projeto gerado</option>
+              <option selected={project.status === 'Material enviado'}>Material enviado</option>
+              <option selected={project.status === 'Material entregue'}>Material entregue</option>
+              <option selected={project.status === 'Amostras coletadas'}>Amostras coletadas</option>
+              <option selected={project.status === 'Amostras enviadas'}>Amostras enviadas</option>
+              <option selected={project.status === 'DNA extraído'}>DNA extraído</option>
+              <option selected={project.status === 'DNA amplificado'}>DNA amplificado</option>
+              <option selected={project.status === 'DNA sequenciado'}>DNA sequenciado</option>
+              <option selected={project.status === 'Analisando dados'}>Analisando dados</option>
+              <option selected={project.status === 'Gerando relatório'}>Gerando relatório</option>
+              <option selected={project.status === 'Relatório entregue'}>Relatório entregue</option>
+            </select>
+          </div>
         <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800">
           Salvar Alterações
         </button>

@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
   const id = form.get('id')?.toString();
   const name = form.get('name')?.toString().trim();
   const description = form.get('description')?.toString().trim();
+  const status = form.get('status')?.toString().trim();
 
   if (!id || !name) {
     return new Response('Dados inválidos', { status: 400 });
@@ -15,7 +16,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   const { error } = await supabase
     .from('projects')
-    .update({ name, description })
+    .update({ 
+      name, 
+      description, 
+      status 
+    })
     .eq('id', id);
 
   if (error) {
@@ -23,6 +28,5 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response('Erro ao atualizar projeto', { status: 500 });
   }
 
-  // 🔁 Aqui está o redirecionamento corrigido
   return Response.redirect(new URL('/admin', request.url), 303);
 };

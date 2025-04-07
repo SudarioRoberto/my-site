@@ -1,28 +1,47 @@
 // src/pages/api/admin-login.ts
 import type { APIRoute } from 'astro';
-
-// ⚠️ Em produção, use um sistema de autenticação seguro e banco de dados
-const ADMIN_EMAIL = 'sudario@alphabioma.com';
-const ADMIN_PASSWORD = '3588Ufla+'; // Substitua por algo mais seguro
+import crypto from 'crypto';
 
 export const prerender = false;
 
+// Credenciais do admin específicas solicitadas
+const ADMIN_EMAIL = 'sudario@alphabioma.com';
+const ADMIN_PASSWORD = '3588Ufla+';
+
+// Função simples para verificar a senha do admin
+function verifyAdminPassword(password) {
+  // Comparação direta para fins de desenvolvimento
+  return password === ADMIN_PASSWORD;
+}
+
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
-  const form = await request.formData();
-  const email = form.get('email')?.toString();
-  const password = form.get('password')?.toString();
+  try {
+    const { email, password } = await request.json();
 
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    cookies.set('admin_auth', 'true', {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 2, // 2 horas
-    });
-    return redirect('/admin');
+    // Verificar credenciais de admin
+    if (email === ADMIN_EMAIL && verifyAdminPassword(password)) {
+      cookies.set('admin_auth', 'true', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 2, // 2 horas
+      });
+      
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: 'Login de administrador bem-sucedido.'
+      }), { status: 200 });
+    }
+
+    return new Response(JSON.stringify({
+      success: false,
+      message: 'Credenciais de administrador inválidas.'
+    }), { status: 401 });
+  } catch (error) {
+    console.error('Erro no login admin:', error);
+    return new Response(JSON.stringify({
+      success: false, 
+      message: 'Erro ao processar o login.'
+    }), { status: 500 });
   }
-
-  return new Response('Credenciais inválidas', {
-    status: 401,
-  });
 };

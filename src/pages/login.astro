@@ -1,0 +1,119 @@
+---
+// src/pages/login.astro
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <section class="relative h-screen flex flex-col items-center justify-center text-center px-6 md:px-20 bg-black overflow-hidden">
+    <video autoplay muted loop playsinline
+      class="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-30">
+      <source src="/video/dna.mp4" type="video/mp4" />
+    </video>
+    
+    <div class="relative z-10 max-w-md mx-auto bg-white/10 backdrop-blur-xl p-8 rounded-2xl border border-white/20 shadow-xl">
+      <h1 class="text-3xl font-bold text-white mb-6">Acesso AlphaBioma</h1>
+      
+      <form id="loginForm" class="space-y-5">
+        <div class="space-y-2">
+          <label for="userId" class="block text-white text-left">ID do Usuário</label>
+          <input 
+            type="text" 
+            id="userId" 
+            name="userId" 
+            required
+            class="w-full p-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Email (Admin) ou ID do Projeto (Cliente)"
+          />
+        </div>
+        
+        <div class="space-y-2">
+          <label for="password" class="block text-white text-left">Senha</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            required
+            class="w-full p-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Digite sua senha"
+          />
+        </div>
+        
+        <a href="/reset-password" class="block text-sm text-blue-300 text-right hover:underline">
+          Esqueceu a senha?
+        </a>
+        
+        <button 
+          type="submit" 
+          class="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl text-white font-bold hover:opacity-90 transition"
+          id="loginButton"
+        >
+          Entrar
+        </button>
+      </form>
+      
+      <div id="errorMessage" class="mt-4 text-red-500 hidden"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const loginButton = document.getElementById('loginButton');
+    
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const userId = document.getElementById('userId').value;
+      const password = document.getElementById('password').value;
+      
+      loginButton.textContent = 'Entrando...';
+      loginButton.disabled = true;
+      
+      try {
+        // Primeiro tentamos o login como admin
+        const adminResponse = await fetch('/api/admin-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email: userId, password })
+        });
+        
+        if (adminResponse.ok) {
+          // Login de admin bem-sucedido
+          window.location.href = '/admin';
+          return;
+        }
+        
+        // Se não for admin, tentamos como cliente
+        const clientResponse = await fetch('/api/client-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ projectId: userId, password })
+        });
+        
+        const clientData = await clientResponse.json();
+        
+        if (clientResponse.ok) {
+          // Login de cliente bem-sucedido
+          window.location.href = '/client-dashboard';
+          return;
+        } else {
+          // Ambos os logins falharam
+          errorMessage.textContent = clientData.message || 'Credenciais inválidas. Tente novamente.';
+          errorMessage.classList.remove('hidden');
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Erro ao tentar fazer login. Tente novamente mais tarde.';
+        errorMessage.classList.remove('hidden');
+      } finally {
+        loginButton.textContent = 'Entrar';
+        loginButton.disabled = false;
+      }
+    });
+  });
+</script>

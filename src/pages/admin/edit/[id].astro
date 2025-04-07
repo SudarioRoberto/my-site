@@ -9,9 +9,24 @@ const id = params.id;
 
 const { data: project, error } = await supabase
   .from('projects')
-  .select('name, description')
+  .select('name, description, status')
   .eq('id', id)
   .single();
+
+// Lista de possíveis status para o projeto
+const statusOptions = [
+  'Projeto gerado',
+  'Material enviado',
+  'Material entregue',
+  'Amostras coletadas',
+  'Amostras enviadas',
+  'DNA extraído',
+  'DNA amplificado',
+  'DNA sequenciado',
+  'Analisando dados',
+  'Gerando relatório',
+  'Relatório entregue'
+];
 
 if (error) {
   console.error(error);
@@ -34,6 +49,20 @@ if (error) {
         <div>
           <label class="block font-semibold mb-1">Descrição</label>
           <textarea name="description" rows="4" class="w-full border p-3 rounded">{project?.description}</textarea>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Status do Projeto</label>
+          <select name="status" class="w-full border p-3 rounded">
+            {statusOptions.map(status => (
+              <option 
+                value={status} 
+                selected={project?.status === status}
+              >
+                {status}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button class="bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800" type="submit">
