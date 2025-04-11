@@ -1,7 +1,5 @@
 // src/pages/api/download-datamatrix.js
-import { createSVGWindow } from 'svgdom';
-import { SVG, registerWindow } from '@svgjs/svg.js';
-import { DataMatrix } from 'datamatrix-svg';
+import bwipjs from 'bwip-js';
 
 export const prerender = false;
 
@@ -14,21 +12,16 @@ export async function GET({ request }) {
   }
   
   try {
-    // Configurar ambiente para SVG
-    const window = createSVGWindow();
-    const document = window.document;
-    registerWindow(window, document);
-    
-    // Criar o Data Matrix
-    const datamatrix = new DataMatrix({
-      msg: text,
-      margin: 2,
-      size: 'auto', // Tamanho automático baseado no conteúdo
-      color: '#000000'
+    // Gerar SVG usando bwip-js
+    const svgString = await bwipjs.toSVG({
+      bcid: 'datamatrix',       // Tipo de código: DataMatrix
+      text: text,               // Texto a codificar
+      scale: 3,                 // Escala um pouco maior para download
+      includetext: false,       // Não incluir texto legível
+      textxalign: 'center',     // Alinhamento do texto (mesmo que não usado)
+      paddingwidth: 2,          // Equivalente à margem
+      paddingheight: 2
     });
-    
-    // Obter o SVG como string
-    const svgString = datamatrix.toString();
     
     // Adicionar alguns metadados para garantir que o SVG se comporte bem quando baixado
     const fileName = `datamatrix-${text.replace(/[^a-zA-Z0-9]/g, '-')}.svg`;

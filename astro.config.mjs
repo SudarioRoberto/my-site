@@ -1,9 +1,12 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
-import tailwind from '@astrojs/tailwind';
+import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
-  integrations: [tailwind()],
+  vite: {
+    ssr: {
+      noExternal: ['nodemailer', 'bcryptjs'], // Add bcryptjs here
+    },
+  },
 });
